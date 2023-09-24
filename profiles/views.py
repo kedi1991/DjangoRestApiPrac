@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Profiles
+from rest_framework import status
 from django.http import Http404
 from .serializers import ProfileSerializers
 
@@ -11,7 +12,7 @@ class ProfileList(APIView):
         serializer = ProfileSerializers(profiles, many=True)
         return Response(serializer.data)
     
-    
+
 class ProfileDetail(APIView):
     def get_object(self, pk):
         try:
@@ -24,3 +25,12 @@ class ProfileDetail(APIView):
         profile = self.get_object(pk)
         serializer = ProfileSerializers(profile)
         return Response(serializer.data)
+
+    def put(self, request, pk):
+        profile = self.get_object(pk)
+        serializer = ProfileSerializers(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(profile)
+        else:
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

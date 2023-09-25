@@ -23,3 +23,8 @@ class PostList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request ,pk):
+        post = self.get_object(pk)
+        post.delete()
+        return Response(status.HTTP_204_NO_CONTENT)
